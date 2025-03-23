@@ -7,11 +7,17 @@ class BookspiderSpider(scrapy.Spider):
     allowed_domains = ["books.toscrape.com"]
     start_urls = ["https://books.toscrape.com"]
 
+    custom_settings = {
+        'FEEDS': {
+            'data/booksdata.json': {'format': 'json', 'overwrite': True},
+        }
+    }
+
     def parse(self, response):
         books = response.css('article.product_pod')
 
         for book in books:
-            relative_url = response.css('h3 a ::attr(href)').get()
+            relative_url = book.css('h3 a ::attr(href)').get()
 
             if 'catalogue/' in relative_url:
                 book_url = 'https://books.toscrape.com/' + relative_url
